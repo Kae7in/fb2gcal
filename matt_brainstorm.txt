@@ -1,0 +1,28 @@
+Matt's refactor/architecture/features brainstorm - 3am 10/19/2014
+
+- data
+  - app_settings.json: client id, client secret
+  - user_settings.json: everything configured in setup script; OAuth tokens + expiration
+  - user_state.json: IDs of last n events examined, log of k previous runs and statuses
+
+- setup script
+  - starts Flask server for proper OAuth flow, configurability
+  - launch browser to relevant webpage
+  - get access and refresh tokens for FB and Google
+  - configure shared import/export settings
+    - time interval x week ago - y weeks in the future
+  - configure FB import settings
+    - only attending / attending+maybe / all
+  - configure Google export settings
+    - which calendars to look at for duplicates
+    - whether to update descriptions of suspected duplicates with FB links
+    - target calendar to put newly generated events on
+
+- cron script
+  - refresh both tokens as needed
+  - pull FB events over time interval (1 request + pagination)
+  - pull Google events over time interval (1 request + pagination)
+  - filter FB events
+  - optionally, update dupe'd Google events w/o link (1 request)
+  - add new events (1 request)
+  - update user_state.json
