@@ -46,13 +46,37 @@ for calendar in calendars['items'] :
 """
 
 def eventInCalendars(event, calendars):
-	for calendar in calendars:
+	for calendar in calendars['items']:
 		if eventInCalendar(event, calendar):
 			return True
 	return False
 
-def eventInCalendar(event, calendar):
-	# TODO: make this actually work
+def eventInCalendar(f_event, calendar):
+	calendar_id = calendar['id']
+	timezone = f_event["start_time"][-5:]
+	timezone = timezone[:-2] + ":" + timezone[-2:]
+
+	def parseFacebookTime(s):
+		return datetime.strptime(s[:-5], '%Y-%m-%dT%H:%M:%S')
+
+	def formatGoogleTime(dt):
+		s = datetime.strftime(dt, '%Y-%m-%dT%H:%M:%S.000')
+		return s + timezone
+
+	event_name = f_event['name']
+	start_time = parseFacebookTime(f_event['start_time'])
+	end_time   = parseFacebookTime(f_event['end_time']) if 'end_time' in f_event else start_time + timedelta(hours=1)
+	print('calendarId: ' + calendar_id)
+	print('start_time: %s' % start_time)
+	print('end_time: %s' % end_time)
+	g_events = service.events().list(
+		calendarId=calendar_id,
+		timeMin=formatGoogleTime(start_time),
+		timeMax=formatGoogleTime(end_time)
+	).execute()
+	for e in g_events['items']:
+		if (e['summary'] == f_event['name']):
+			return True
 	return False
 
 def addEventToCalendar(event, calendar):
@@ -70,7 +94,7 @@ def addEventToCalendar(event, calendar):
 
 	event_name = event['name']
 	start_time = parseFacebookTime(event['start_time'])
-	end_time = parseFacebookTime(event['end_time']) if 'end_time' in event else start_time + timedelta(hours=1)
+	end_time   = parseFacebookTime(event['end_time']) if 'end_time' in event else start_time + timedelta(hours=1)
 
 	body = {
 		'summary' : event_name,
@@ -92,4 +116,6 @@ def addEventToCalendar(event, calendar):
 for event in events['data']:
 	if not eventInCalendars(event, calendars):
 		addEventToCalendar(event, fbEventCalendar)
+	else:
+		print "event already in calendar, skipping"
 
