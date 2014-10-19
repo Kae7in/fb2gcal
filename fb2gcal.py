@@ -69,6 +69,9 @@ def eventInCalendar(f_event, calendar):
 	print('calendarId: ' + calendar_id)
 	print('start_time: %s' % start_time)
 	print('end_time: %s' % end_time)
+
+	#this is redundant and expensive to perform for every event
+	#grab events in g_cal once
 	g_events = service.events().list(
 		calendarId=calendar_id,
 		timeMin=formatGoogleTime(start_time),
