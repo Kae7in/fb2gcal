@@ -1,0 +1,10 @@
+{
+	"google_auth": {
+		"client_id": "",
+		"client_secret": ""
+	},
+	"facebook_auth": {
+		"client_id": "",
+		"client_secret": ""
+	}
+}

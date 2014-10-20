@@ -1,0 +1,14 @@
+{
+ "google_auth": {
+  "access_token": "", 
+  "expiration": 0, 
+  "refresh_token": ""
+ }, 
+ "facebook_auth": {
+  "access_token": "", 
+  "expiration": 0, 
+  "refresh_token": ""
+ },
+ "start_delta": -2,
+ "end_delta": 12
+}
